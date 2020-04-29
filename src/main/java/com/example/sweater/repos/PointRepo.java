@@ -11,4 +11,5 @@ public interface PointRepo extends CrudRepository<Point, Long> {
     Point findByCustomer(User user);
     List<Point> findByOrdered(Boolean ordered);
     List<Point> findByCustomerIsNull();
+    Point findByCustomerId(Integer id);
 }

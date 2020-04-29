@@ -57,7 +57,7 @@ public class MainController {
     }
     @GetMapping("/order")
     public String order(@AuthenticationPrincipal User user, Map<String, Object> model) {
-        Point point = pointRepo.findByCustomer(user);
+        Point point = pointRepo.findByCustomerId(user.getId());
         model.put("point", point);
 
         return "order";
