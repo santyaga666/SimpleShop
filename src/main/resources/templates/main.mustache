@@ -1,0 +1,32 @@
+<html>
+
+<body>
+<form action="/logout" method="post">
+    <input type="submit" value="Sign Out"/>
+</form>
+<div>
+    <form method="post">
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
+        <input type="text" name="photo" placeholder="Введите ссылку на фото" >
+        <input type="text" name="price" placeholder="Введите цену">
+        <input type="text" name="name" placeholder="Введите имя">
+        <button type="submit">Добавить</button>
+    </form>
+</div>
+<div>Список лотов</div>
+{{#points}}
+    <div>
+        <b>{{id}}</b>
+        <strong>{{photo}}</strong>
+        <strong>{{price}}</strong>
+        <strong>{{name}}</strong>
+
+        <form method="post" action="order">
+            <input type="hidden" name="_csrf" value="{{_csrf.token}}">
+            <input type="hidden" name="id" value="{{id}}">
+            <button type="submit">Выбрать</button>
+        </form>
+    </div>
+{{/points}}
+</body>
+</html>
