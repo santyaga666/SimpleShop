@@ -116,11 +116,6 @@ public class MainController {
         user.setEpayLogin("380660508166");
         Login login = new Login("easypay-v2-android", "password", user.getEpayLogin(), user.getEpayPassword());
 
-        String command =
-                "curl -X POST --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' --header 'PartnerKey: easypay-v2' --header 'locale: UA' --header 'koatuu: 8000000000' --header 'AppId: f6705a87-aaed-4d32-8223-68d39866c114' --header 'PageId: 68e6632d-bb1f-4fc7-9473-832be3a3b208' -d 'client_id=easypay-v2-android&grant_type=password&username=380660508166&password=Kolya69133' 'https://api.easypay.ua/api/token'\n";
-        ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
-
-        HttpHeaders httpHeaders = restTemplate.headForHeaders(url+"api/token");
         ResponseEntity<String> entity = restTemplate1.postForEntity(url+"api/token", login, String.class, map2);
         ObjectMapper mapper = new ObjectMapper();
         HashMap<String, String> body = mapper.readValue(entity.getBody(), HashMap.class);
