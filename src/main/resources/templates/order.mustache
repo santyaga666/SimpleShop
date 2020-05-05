@@ -12,6 +12,15 @@
         <input type="hidden" name="id" value="{{point.id}}">
         <button type="submit">Отменить</button>
     </form>
+    <form method="post" action="verify">
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
+        <input type="text" name="code" placeholder="Введите код">
+        <button type="submit">Проверить код</button>
+    </form>
+    <div>
+        {{body}}
+        {{headers}}
+    </div>
 </div>
 </body>
 </html>
