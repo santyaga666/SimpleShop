@@ -1,4 +1,4 @@
-package com.example.sweater.domain;
+package com.example.simpleshop.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

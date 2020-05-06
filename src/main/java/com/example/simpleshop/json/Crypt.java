@@ -1,4 +1,4 @@
-package com.example.sweater.json;
+package com.example.simpleshop.json;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

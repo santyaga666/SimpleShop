@@ -1,12 +1,10 @@
-package com.example.sweater.domain;
+package com.example.simpleshop.domain;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Set;
 
 @Entity
@@ -19,30 +17,12 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private boolean active;
-    private String epayPassword;
-    private String epayLogin;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-
-    public String getEpayLogin() {
-        return epayLogin;
-    }
-
-    public void setEpayLogin(String epayLogin) {
-        this.epayLogin = epayLogin;
-    }
-
-    public String getEpayPassword() {
-        return epayPassword;
-    }
-
-    public void setEpayPassword(String epayPassword) {
-        this.epayPassword = epayPassword;
-    }
 
     public Integer getId() {
         return id;

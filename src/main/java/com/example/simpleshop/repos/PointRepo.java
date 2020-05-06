@@ -1,7 +1,7 @@
-package com.example.sweater.repos;
+package com.example.simpleshop.repos;
 
-import com.example.sweater.domain.Point;
-import com.example.sweater.domain.User;
+import com.example.simpleshop.domain.Point;
+import com.example.simpleshop.domain.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

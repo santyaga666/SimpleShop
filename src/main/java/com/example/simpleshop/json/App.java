@@ -1,4 +1,4 @@
-package com.example.sweater.json;
+package com.example.simpleshop.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
