@@ -18,11 +18,21 @@ public class User implements UserDetails {
     private String password;
     private boolean active;
 
+    @OneToOne
+    private Token token;
+
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
+    public Token getToken() {
+        return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
+    }
 
     public Integer getId() {
         return id;

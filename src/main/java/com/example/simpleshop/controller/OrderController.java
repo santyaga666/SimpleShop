@@ -1,6 +1,7 @@
 package com.example.simpleshop.controller;
 
 import com.example.simpleshop.domain.Point;
+import com.example.simpleshop.domain.User;
 import com.example.simpleshop.repos.PointRepo;
 import com.example.simpleshop.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,45 +12,44 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Map;
 
 @Controller
-public class MainController {
+public class OrderController {
     @Autowired
-    private PointRepo pointRepo;
+    PointRepo pointRepo;
     @Autowired
-    private UserRepo userRepo;
+    UserRepo userRepo;
 
-    @GetMapping("/")
-    public String greeting(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Map<String, Object> model) {
-        model.put("name", name);
-        return "greeting";
-    }
-    @GetMapping("/main")
-    public String main(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
-        List<Point> points = pointRepo.findByOrdered(false);
-        model.put("points", points);
-        model.put("filter", " ");
-        return "main";
-    }
-    @PostMapping("/main")
-    public String add(@RequestParam String photo, @RequestParam String price, @RequestParam String name, Map<String, Object> model) {
+    @GetMapping("/order")
+    public String order(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
+        User user = userRepo.findByUsername(userDetails.getUsername());
+        Point point = pointRepo.findByCustomer(user);
+        model.put("point", point);
 
-        Point point = new Point(photo, price, name);
+        return "order";
+    }
+    @PostMapping("cancel")
+    public String cancel(@RequestParam Integer id) {
+        Point point = pointRepo.findById(id);
+        pointRepo.delete(point);
+        point.setCustomer(null);
+        point.setOrdered(false);
         pointRepo.save(point);
-
         return "redirect:/main";
     }
-    @PostMapping("filter")
-    public String filter(@RequestParam String filter, Map<String, Object> model) {
-        List<Point> points = pointRepo.findByNameAndOrdered(filter, false);
-        model.put("points", points);
-        model.put("filter", filter);
-        return "main";
-    }
+    @PostMapping("order")
+    public String startOrder(@AuthenticationPrincipal UserDetails userDetails, @RequestParam Integer id) {
+        Point point = pointRepo.findById(id);
+        pointRepo.delete(point);
+        User user = userRepo.findByUsername(userDetails.getUsername());
+        point.setCustomer(user);
+        point.setOrdered(true);
+        pointRepo.save(point);
 
-//    @PostMapping("verify")
+        return "forward:/easypay/getToken";
+    }
+    //    @PostMapping("verify")
 //    public String verify(HttpServletResponse httpServletResponse, @AuthenticationPrincipal UserDetails userDetails, @RequestParam String code, Map<String, Object> model) throws NoSuchAlgorithmException {
 //        User user = userRepo.findByUsername(userDetails.getUsername());
 //        Point point = pointRepo.findByCustomer(user);
@@ -95,6 +95,4 @@ public class MainController {
 //
 //
 //    }
-
-
 }
