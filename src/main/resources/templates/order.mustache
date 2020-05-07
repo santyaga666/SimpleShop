@@ -9,7 +9,6 @@
     </div>
     <form method="post" action="cancel">
         <input type="hidden" name="_csrf" value="{{_csrf.token}}">
-        <input type="hidden" name="id" value="{{point.id}}">
         <button type="submit">Отменить</button>
     </form>
     <form method="post" action="verify">

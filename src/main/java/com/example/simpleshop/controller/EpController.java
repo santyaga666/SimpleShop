@@ -5,7 +5,9 @@ import com.example.simpleshop.domain.Token;
 import com.example.simpleshop.domain.User;
 import com.example.simpleshop.json.App;
 import com.example.simpleshop.repos.PointRepo;
+import com.example.simpleshop.repos.TokenRepo;
 import com.example.simpleshop.repos.UserRepo;
+import com.google.gson.Gson;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -26,9 +28,11 @@ import java.util.Map;
 @Controller
 public class EpController {
     @Autowired
-    UserRepo userRepo;
+    private UserRepo userRepo;
     @Autowired
-    PointRepo pointRepo;
+    private PointRepo pointRepo;
+    @Autowired
+    private TokenRepo tokenRepo;
 
     @PostMapping("/easypay/getToken")
     public String createToken(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
@@ -46,7 +50,8 @@ public class EpController {
         body.add("grant_type", "password");
         body.add("username", "380660508166");
         body.add("password", "Kolya69133");
-        HttpHeaders headers = new HttpHeaders();
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Content-Type", "application/x-www-form-urlencoded");
         headers.add("Accept", "application/json");
         headers.add("PartnerKey", "easypay-v2");
@@ -57,11 +62,52 @@ public class EpController {
 
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(body, headers);
 
+        Gson gson = new Gson();
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(url + "api/token", httpEntity, String.class);
-        JSONObject object = new JSONObject(responseEntity.getBody());
-        Token token = new Token(object.getString("access_token"), object.getString("token_type"), object.getString("refresh_token"), object.getString("userName"), object.getString("userId"), object.getString("as:client_id"), object.getString(".issued"), object.getString(".expires"));
-        user.setToken(token);
-        userRepo.save(user);
+
+        Token token = gson.fromJson(responseEntity.getBody(), Token.class);
+        token.setOwnerId(user.getId().longValue());
+        token.setPageId(response.getPageId());
+        token.setAppId(response.getAppId());
+        tokenRepo.save(token);
+
+        return "forward:/easypay/addWallet";
+    }
+    @PostMapping("/easypay/addWallet")
+    public String addWallet(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
+        User user = userRepo.findByUsername(userDetails.getUsername());
+        Point point = pointRepo.findByCustomer(user);
+        Token token = tokenRepo.findByOwnerId(user.getId().longValue());
+        //model.put("point", point);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("name", user.getUsername());
+        body.add("color", "string");
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Authorization", "bearer " + token.getAccess_token());
+        headers.add("Content-Type", "application/json");
+        headers.add("Accept", "application/json");
+        headers.add("PartnerKey", "easypay-v2");
+        headers.add("locale", "UA");
+        headers.add("koatuu", "8000000000");
+        headers.add("AppId", token.getAppId());
+        headers.add("PageId", token.getPageId());
+
+        Gson gson = new Gson();
+        String jsonHeaders = gson.toJson(headers);
+        String jsonBody = gson.toJson(body, LinkedMultiValueMap.class);
+        jsonBody = "{\n" +
+                "  \"name\": \"string\",\n" +
+                "  \"color\": \"string\"\n" +
+                "}";
+
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://api.easypay.ua/";
+        HttpEntity<String> httpEntity = new HttpEntity<String>(jsonBody, headers);
+        ResponseEntity<String> entity = restTemplate.postForEntity(url + "api/wallets/add", httpEntity, String.class);
+
 
         return "order";
     }

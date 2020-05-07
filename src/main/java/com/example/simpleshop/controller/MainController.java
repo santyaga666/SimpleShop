@@ -48,6 +48,11 @@ public class MainController {
         model.put("filter", filter);
         return "main";
     }
+    @PostMapping("clear")
+    public String clear(){
+        pointRepo.deleteAll();
+        return "redirect:/main";
+    }
 
 //    @PostMapping("verify")
 //    public String verify(HttpServletResponse httpServletResponse, @AuthenticationPrincipal UserDetails userDetails, @RequestParam String code, Map<String, Object> model) throws NoSuchAlgorithmException {

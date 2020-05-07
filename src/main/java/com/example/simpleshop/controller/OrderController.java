@@ -1,8 +1,10 @@
 package com.example.simpleshop.controller;
 
 import com.example.simpleshop.domain.Point;
+import com.example.simpleshop.domain.Token;
 import com.example.simpleshop.domain.User;
 import com.example.simpleshop.repos.PointRepo;
+import com.example.simpleshop.repos.TokenRepo;
 import com.example.simpleshop.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,9 +19,11 @@ import java.util.Map;
 @Controller
 public class OrderController {
     @Autowired
-    PointRepo pointRepo;
+    private PointRepo pointRepo;
     @Autowired
-    UserRepo userRepo;
+    private UserRepo userRepo;
+    @Autowired
+    private TokenRepo tokenRepo;
 
     @GetMapping("/order")
     public String order(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
@@ -30,9 +34,10 @@ public class OrderController {
         return "order";
     }
     @PostMapping("cancel")
-    public String cancel(@RequestParam Integer id) {
-        Point point = pointRepo.findById(id);
+    public String cancel(@AuthenticationPrincipal UserDetails userDetails) {
+        Point point = pointRepo.findByCustomerId(userRepo.findByUsername(userDetails.getUsername()).getId());
         pointRepo.delete(point);
+        tokenRepo.delete(tokenRepo.findByOwnerId(userRepo.findByUsername(userDetails.getUsername()).getId().longValue()));
         point.setCustomer(null);
         point.setOrdered(false);
         pointRepo.save(point);
