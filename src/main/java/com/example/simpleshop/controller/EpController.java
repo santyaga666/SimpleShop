@@ -71,6 +71,7 @@ public class EpController {
 
         return "forward:/easypay/addWallet";
     }
+
     @PostMapping("/easypay/addWallet")
     public String addWallet(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
         User user = userRepo.findByUsername(userDetails.getUsername());
@@ -105,25 +106,39 @@ public class EpController {
         String url = "https://api.easypay.ua/";
         HttpEntity<String> httpEntity = new HttpEntity<String>(jsonBody, headers);
         WalletInfo walletInfo = restTemplate.postForObject(url + "api/wallets/add", httpEntity, WalletInfo.class);
-        token.setWalletId(walletInfo.getId());
         httpEntity = new HttpEntity<>(headers);
         ResponseEntity<String> entity = restTemplate.exchange(url + "api/wallets/get/" + walletInfo.getId(), HttpMethod.GET, httpEntity, String.class);
 
-
-
-        // Не знаю как получить автоматически 2 объекта . Решил захардкодить на время
-        // Буду выделять подстроку
-
         String s0 = entity.getBody();
         int q = s0.indexOf("number");
-        String s = s0.substring(q + 9, q+17);
+        String s = s0.substring(q + 9, q + 17);
 
-
-
+        token.setWalletId(walletInfo.getId());
         token.setWalletNumber(s);
-
         tokenRepo.save(token);
 
         return "redirect:/order";
     }
+
+    @PostMapping("/easypay/deleteWallet")
+    public String delete(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userRepo.findByUsername(userDetails.getUsername());
+        Token token = tokenRepo.findByOwnerId(user.getId().longValue());
+        RestTemplate restTemplate = new RestTemplate();
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Authorization", "bearer " + token.getAccess_token());
+        headers.add("Content-Type", "application/json");
+        headers.add("Accept", "application/json");
+        headers.add("PartnerKey", "easypay-v2");
+        headers.add("locale", "UA");
+        headers.add("koatuu", "8000000000");
+        headers.add("AppId", token.getAppId());
+        headers.add("PageId", token.getPageId());
+        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+        ResponseEntity<String> entity = restTemplate.exchange("https://api.easypay.ua/" + "api/wallets/delete/" + token.getWalletId(), HttpMethod.DELETE, httpEntity, String.class);
+
+        return "redirect:/main";
+    }
+
 }

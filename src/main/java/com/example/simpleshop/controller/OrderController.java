@@ -39,11 +39,10 @@ public class OrderController {
     public String cancel(@AuthenticationPrincipal UserDetails userDetails) {
         Point point = pointRepo.findByCustomerId(userRepo.findByUsername(userDetails.getUsername()).getId());
         pointRepo.delete(point);
-        tokenRepo.delete(tokenRepo.findByOwnerId(userRepo.findByUsername(userDetails.getUsername()).getId().longValue()));
         point.setCustomer(null);
         point.setOrdered(false);
         pointRepo.save(point);
-        return "redirect:/main";
+        return "forward:/easypay/deleteWallet";
     }
     @PostMapping("order")
     public String startOrder(@AuthenticationPrincipal UserDetails userDetails, @RequestParam Integer id) {

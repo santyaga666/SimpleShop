@@ -33,8 +33,6 @@ public class MainController {
     @GetMapping("/main")
     public String main(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
         List<Point> points = pointRepo.findByOrdered(false);
-        User user = userRepo.findByUsername(userDetails.getUsername());
-        model.put("userId", user.getId());
         model.put("points", points);
         model.put("filter", " ");
         return "main";
