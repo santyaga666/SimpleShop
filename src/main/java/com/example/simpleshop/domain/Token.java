@@ -19,7 +19,8 @@ public class Token {
     private String userId;
     private String appId;
     private String pageId;
-    private String wallet;
+    private String walletId;
+    private String walletNumber;
     private Integer expires_in;
 
     public Token() {
@@ -42,12 +43,12 @@ public class Token {
         this.expires_in = expires_in;
     }
 
-    public String getWallet() {
-        return wallet;
+    public String getWalletNumber() {
+        return walletNumber;
     }
 
-    public void setWallet(String wallet) {
-        this.wallet = wallet;
+    public void setWalletNumber(String wallet) {
+        this.walletNumber = wallet;
     }
 
     public String getAppId() {
@@ -56,6 +57,14 @@ public class Token {
 
     public void setAppId(String appId) {
         this.appId = appId;
+    }
+
+    public String getWalletId() {
+        return walletId;
+    }
+
+    public void setWalletId(String walletId) {
+        this.walletId = walletId;
     }
 
     public String getPageId() {

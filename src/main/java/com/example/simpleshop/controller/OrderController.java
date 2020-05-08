@@ -29,6 +29,8 @@ public class OrderController {
     public String order(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
         User user = userRepo.findByUsername(userDetails.getUsername());
         Point point = pointRepo.findByCustomer(user);
+        Token token = tokenRepo.findByOwnerId(user.getId().longValue());
+        model.put("wallet", token.getWalletNumber());
         model.put("point", point);
 
         return "order";

@@ -1,7 +1,9 @@
 package com.example.simpleshop.controller;
 
 import com.example.simpleshop.domain.Point;
+import com.example.simpleshop.domain.User;
 import com.example.simpleshop.repos.PointRepo;
+import com.example.simpleshop.repos.TokenRepo;
 import com.example.simpleshop.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +22,8 @@ public class MainController {
     private PointRepo pointRepo;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private TokenRepo tokenRepo;
 
     @GetMapping("/")
     public String greeting(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Map<String, Object> model) {
@@ -29,6 +33,8 @@ public class MainController {
     @GetMapping("/main")
     public String main(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
         List<Point> points = pointRepo.findByOrdered(false);
+        User user = userRepo.findByUsername(userDetails.getUsername());
+        model.put("userId", user.getId());
         model.put("points", points);
         model.put("filter", " ");
         return "main";
@@ -51,6 +57,7 @@ public class MainController {
     @PostMapping("clear")
     public String clear(){
         pointRepo.deleteAll();
+        tokenRepo.deleteAll();
         return "redirect:/main";
     }
 

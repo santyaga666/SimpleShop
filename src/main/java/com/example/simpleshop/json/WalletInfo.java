@@ -4,10 +4,24 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WalletInfo {
+    private String number;
     private String id;
     private String instrumentId;
     private String activateCodeType;
-    private String error;
+
+    public WalletInfo() {}
+
+    public WalletInfo(String number) {
+        this.number = number;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
 
     public String getId() {
         return id;
@@ -31,13 +45,5 @@ public class WalletInfo {
 
     public void setActivateCodeType(String activateCodeType) {
         this.activateCodeType = activateCodeType;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
     }
 }
