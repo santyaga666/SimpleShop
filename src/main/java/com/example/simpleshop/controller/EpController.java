@@ -39,6 +39,11 @@ public class EpController {
         Point point = pointRepo.findByCustomer(user);
         model.put("point", point);
 
+
+        System.setProperty( "https.proxyPort", "34996" );
+        System.setProperty( "https.proxyHost", "109.87.48.66" );
+
+
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://api.easypay.ua/";
 
