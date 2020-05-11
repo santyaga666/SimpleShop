@@ -1,5 +1,7 @@
 package com.example.simpleshop.domain;
 
+import com.google.gson.annotations.SerializedName;
+
 import javax.persistence.*;
 
 @Entity
@@ -19,20 +21,54 @@ public class Token {
     private String userId;
     private String appId;
     private String pageId;
-    private String walletId;
-    private String walletNumber;
     private Integer expires_in;
+
+    @SerializedName("as:client_id")
+    private String clientId;
+
+    @SerializedName(".issued")
+    private String issued;
+
+    @SerializedName(".expires")
+    private String expires;
 
     public Token() {
     }
 
-    public Token(String access_token, String token_type, Integer expires_in, String refresh_token, String userName, String userId) {
+    public Token(String access_token, String token_type, Integer expires_in, String refresh_token, String userName, String userId, String clientId, String issued, String expires) {
         this.access_token = access_token;
         this.token_type = token_type;
         this.refresh_token = refresh_token;
         this.userName = userName;
         this.userId = userId;
         this.expires_in = expires_in;
+        this.clientId = clientId;
+        this.issued = issued;
+        this.expires = expires;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getIssued() {
+        return issued;
+    }
+
+    public void setIssued(String issued) {
+        this.issued = issued;
+    }
+
+    public String getExpires() {
+        return expires;
+    }
+
+    public void setExpires(String expires) {
+        this.expires = expires;
     }
 
     public Integer getExpires_in() {
@@ -43,28 +79,12 @@ public class Token {
         this.expires_in = expires_in;
     }
 
-    public String getWalletNumber() {
-        return walletNumber;
-    }
-
-    public void setWalletNumber(String wallet) {
-        this.walletNumber = wallet;
-    }
-
     public String getAppId() {
         return appId;
     }
 
     public void setAppId(String appId) {
         this.appId = appId;
-    }
-
-    public String getWalletId() {
-        return walletId;
-    }
-
-    public void setWalletId(String walletId) {
-        this.walletId = walletId;
     }
 
     public String getPageId() {

@@ -33,53 +33,10 @@ public class EpController {
     @Autowired
     private TokenRepo tokenRepo;
 
-    @PostMapping("/easypay/getToken")
-    public String createToken(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
-        User user = userRepo.findByUsername(userDetails.getUsername());
-        Point point = pointRepo.findByCustomer(user);
-        model.put("point", point);
-
-
-        System.setProperty( "https.proxyPort", "34996" );
-        System.setProperty( "https.proxyHost", "109.87.48.66" );
-
-
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "https://api.easypay.ua/";
-
-        App response = restTemplate.postForObject(url + "api/system/createApp", null, App.class);
-
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("client_id", "easypay-v2-android");
-        body.add("grant_type", "password");
-        body.add("username", "380660508166");
-        body.add("password", "Kolya69133");
-
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Content-Type", "application/x-www-form-urlencoded");
-        headers.add("Accept", "application/json");
-        headers.add("PartnerKey", "easypay-v2");
-        headers.add("locale", "UA");
-        headers.add("koatuu", "8000000000");
-        headers.add("AppId", response.getAppId());
-        headers.add("PageId", response.getPageId());
-
-        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(body, headers);
-
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity(url + "api/token", httpEntity, String.class);
-        Gson gson = new Gson();
-        Token token = gson.fromJson(responseEntity.getBody(), Token.class);
-        token.setOwnerId(user.getId().longValue());
-        token.setPageId(response.getPageId());
-        token.setAppId(response.getAppId());
-        tokenRepo.save(token);
-
-        return "forward:/easypay/addWallet";
-    }
-
     @PostMapping("/easypay/addWallet")
     public String addWallet(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
         User user = userRepo.findByUsername(userDetails.getUsername());
+        if(tokenRepo.findAll() == null ||tokenRepo.findAll().)
         Point point = pointRepo.findByCustomer(user);
         Token token = tokenRepo.findByOwnerId(user.getId().longValue());
         //model.put("point", point);
@@ -118,9 +75,9 @@ public class EpController {
         int q = s0.indexOf("number");
         String s = s0.substring(q + 9, q + 17);
 
-        token.setWalletId(walletInfo.getId());
-        token.setWalletNumber(s);
-        tokenRepo.save(token);
+        user.setWalletId(walletInfo.getId());
+        user.setWalletNumber(s);
+        userRepo.save(user);
 
         return "redirect:/order";
     }
@@ -141,9 +98,51 @@ public class EpController {
         headers.add("AppId", token.getAppId());
         headers.add("PageId", token.getPageId());
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
-        ResponseEntity<String> entity = restTemplate.exchange("https://api.easypay.ua/" + "api/wallets/delete/" + token.getWalletId(), HttpMethod.DELETE, httpEntity, String.class);
+        ResponseEntity<String> entity = restTemplate.exchange("https://api.easypay.ua/" + "api/wallets/delete/" + user.getWalletId(), HttpMethod.DELETE, httpEntity, String.class);
+        user.setWalletNumber("0");
+        user.setWalletId("0");
+        userRepo.save(user);
 
         return "redirect:/main";
+    }
+
+    @PostMapping("/easypay/checkBalance")
+    public String checkBalance(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userRepo.findByUsername(userDetails.getUsername());
+
+        return "redirect:/order";
+    }
+    private static Token updateToken(int userId) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://api.easypay.ua/";
+
+        App response = restTemplate.postForObject(url + "api/system/createApp", null, App.class);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("client_id", "easypay-v2-android");
+        body.add("grant_type", "password");
+        body.add("username", "380660508166");
+        body.add("password", "Kolya69133");
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/x-www-form-urlencoded");
+        headers.add("Accept", "application/json");
+        headers.add("PartnerKey", "easypay-v2");
+        headers.add("locale", "UA");
+        headers.add("koatuu", "8000000000");
+        headers.add("AppId", response.getAppId());
+        headers.add("PageId", response.getPageId());
+
+        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(url + "api/token", httpEntity, String.class);
+
+        Gson gson = new Gson();
+        Token token = gson.fromJson(responseEntity.getBody(), Token.class);
+        token.setOwnerId((long) userId);
+        token.setPageId(response.getPageId());
+        token.setAppId(response.getAppId());
+        return token;
     }
 
 }

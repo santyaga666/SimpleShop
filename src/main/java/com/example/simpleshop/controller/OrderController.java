@@ -33,7 +33,7 @@ public class OrderController {
         User user = userRepo.findByUsername(userDetails.getUsername());
         Point point = pointRepo.findByCustomer(user);
         Token token = tokenRepo.findByOwnerId(user.getId().longValue());
-        model.put("wallet", token.getWalletNumber());
+        model.put("wallet", user.getWalletNumber());
         model.put("point", point);
 
 //        RestTemplate restTemplate = new RestTemplate();
@@ -63,7 +63,7 @@ public class OrderController {
         point.setOrdered(true);
         pointRepo.save(point);
 
-        return "forward:/easypay/getToken";
+        return "forward:/easypay/addWallet";
     }
     //    @PostMapping("verify")
 //    public String verify(HttpServletResponse httpServletResponse, @AuthenticationPrincipal UserDetails userDetails, @RequestParam String code, Map<String, Object> model) throws NoSuchAlgorithmException {

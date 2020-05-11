@@ -12,6 +12,7 @@ public class Point {
     private String photo;
     private String price;
     private String name;
+    private String wallet;
 
     private Boolean ordered;
 

@@ -17,12 +17,29 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private boolean active;
+    private String walletNumber;
+    private String walletId;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
+    public String getWalletNumber() {
+        return walletNumber;
+    }
+
+    public void setWalletNumber(String walletNumber) {
+        this.walletNumber = walletNumber;
+    }
+
+    public String getWalletId() {
+        return walletId;
+    }
+
+    public void setWalletId(String walletId) {
+        this.walletId = walletId;
+    }
 
     public Integer getId() {
         return id;
