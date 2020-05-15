@@ -36,8 +36,6 @@ public class EpController {
     @PostMapping("/easypay/addWallet")
     public String addWallet(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
         User user = userRepo.findByUsername(userDetails.getUsername());
-        if(tokenRepo.findAll() == null ||tokenRepo.findAll().)
-        Point point = pointRepo.findByCustomer(user);
         Token token = tokenRepo.findByOwnerId(user.getId().longValue());
         //model.put("point", point);
 
@@ -112,7 +110,7 @@ public class EpController {
 
         return "redirect:/order";
     }
-    private static Token updateToken(int userId) {
+    public static Token updateToken(int userId) {
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://api.easypay.ua/";
 

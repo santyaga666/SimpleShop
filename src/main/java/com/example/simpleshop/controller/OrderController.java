@@ -63,6 +63,9 @@ public class OrderController {
         point.setOrdered(true);
         pointRepo.save(point);
 
+        Token token = EpController.updateToken(user.getId());
+        tokenRepo.save(token);
+
         return "forward:/easypay/addWallet";
     }
     //    @PostMapping("verify")
