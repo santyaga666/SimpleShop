@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.Authenticator;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.Iterator;
 import java.util.Map;
 
 @Controller
@@ -36,22 +39,23 @@ public class EpController {
     @PostMapping("/easypay/addWallet")
     public String addWallet(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
         User user = userRepo.findByUsername(userDetails.getUsername());
-        Token token = tokenRepo.findByOwnerId(user.getId().longValue());
-        //model.put("point", point);
+        Iterable<Token> token0 = tokenRepo.findAll();
+        Iterator<Token> token = token0.iterator();
+        Token token1 = token.next();
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("name", user.getUsername());
         body.add("color", "string");
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Authorization", "bearer " + token.getAccess_token());
+        headers.add("Authorization", "bearer " + token1.getAccess_token());
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "application/json");
         headers.add("PartnerKey", "easypay-v2");
         headers.add("locale", "UA");
         headers.add("koatuu", "8000000000");
-        headers.add("AppId", token.getAppId());
-        headers.add("PageId", token.getPageId());
+        headers.add("AppId", token1.getAppId());
+        headers.add("PageId", token1.getPageId());
 
         Gson gson = new Gson();
         String jsonHeaders = gson.toJson(headers);
@@ -83,24 +87,35 @@ public class EpController {
     @PostMapping("/easypay/deleteWallet")
     public String delete(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepo.findByUsername(userDetails.getUsername());
-        Token token = tokenRepo.findByOwnerId(user.getId().longValue());
+        Iterable<Token> token0 = tokenRepo.findAll();
+        Iterator<Token> token = token0.iterator();
+        Token token1 = token.next();
+
+        String expires = token1.getExpires();
+        String formattedExpires = expires.substring(0, expires.indexOf('+'));
+        LocalDateTime localDateTime = LocalDateTime.parse(formattedExpires);
+        LocalDateTime localDateTime1 = LocalDateTime.now();
+        if(localDateTime.compareTo(localDateTime1) < 0) {
+            tokenRepo.deleteAll();
+            token1 = EpController.updateToken();
+        }
+
         RestTemplate restTemplate = new RestTemplate();
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Authorization", "bearer " + token.getAccess_token());
+        headers.add("Authorization", "bearer " + token1.getAccess_token());
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "application/json");
         headers.add("PartnerKey", "easypay-v2");
         headers.add("locale", "UA");
         headers.add("koatuu", "8000000000");
-        headers.add("AppId", token.getAppId());
-        headers.add("PageId", token.getPageId());
+        headers.add("AppId", token1.getAppId());
+        headers.add("PageId", token1.getPageId());
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
         ResponseEntity<String> entity = restTemplate.exchange("https://api.easypay.ua/" + "api/wallets/delete/" + user.getWalletId(), HttpMethod.DELETE, httpEntity, String.class);
         user.setWalletNumber("0");
         user.setWalletId("0");
         userRepo.save(user);
-        tokenRepo.delete(token);
 
         return "redirect:/main";
     }
@@ -111,7 +126,7 @@ public class EpController {
 
         return "redirect:/order";
     }
-    public static Token updateToken(int userId) {
+    public static Token updateToken() {
 
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://api.easypay.ua/";
@@ -139,7 +154,6 @@ public class EpController {
 
         Gson gson = new Gson();
         Token token = gson.fromJson(responseEntity.getBody(), Token.class);
-        token.setOwnerId((long) userId);
         token.setPageId(response.getPageId());
         token.setAppId(response.getAppId());
         return token;

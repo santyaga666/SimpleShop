@@ -1,10 +1,14 @@
 package com.example.simpleshop.domain;
 
 import com.google.gson.annotations.SerializedName;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
 @Entity
+@Component
+@Scope("singleton")
 public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
