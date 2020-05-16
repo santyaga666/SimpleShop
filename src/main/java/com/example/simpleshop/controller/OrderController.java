@@ -3,7 +3,7 @@ package com.example.simpleshop.controller;
 import com.example.simpleshop.domain.Point;
 import com.example.simpleshop.domain.Token;
 import com.example.simpleshop.domain.User;
-import com.example.simpleshop.json.TestProxy;
+import com.example.simpleshop.json.MyAuthenticator;
 import com.example.simpleshop.repos.PointRepo;
 import com.example.simpleshop.repos.TokenRepo;
 import com.example.simpleshop.repos.UserRepo;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.Authenticator;
 import java.util.Map;
 
 @Controller
@@ -36,12 +37,12 @@ public class OrderController {
         model.put("wallet", user.getWalletNumber());
         model.put("point", point);
 
-//        RestTemplate restTemplate = new RestTemplate();
-//        HttpEntity<String> entity = restTemplate.getForEntity("https://tnf.fastfen.club/api/Info?action=getSessionState", String.class);
-//        String s0 = entity.getBody();
-//        int a = s0.indexOf("Ip");
-//        String s = s0.substring(a+6, a+18);
-//        model.put("ip", s);
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<String> entity = restTemplate.getForEntity("https://tnf.fastfen.club/api/Info?action=getSessionState", String.class);
+        String s0 = entity.getBody();
+        int a = s0.indexOf("Ip");
+        String s = s0.substring(a+6, a+18);
+        model.put("ip", s);
 
         return "order";
     }

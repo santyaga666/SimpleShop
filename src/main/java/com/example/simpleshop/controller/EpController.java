@@ -1,11 +1,10 @@
 package com.example.simpleshop.controller;
 
-import com.example.simpleshop.domain.Point;
 import com.example.simpleshop.domain.Token;
 import com.example.simpleshop.domain.User;
 import com.example.simpleshop.json.App;
+import com.example.simpleshop.json.MyAuthenticator;
 import com.example.simpleshop.json.WalletInfo;
-import com.example.simpleshop.json.WalletResponse;
 import com.example.simpleshop.repos.PointRepo;
 import com.example.simpleshop.repos.TokenRepo;
 import com.example.simpleshop.repos.UserRepo;
@@ -22,6 +21,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.Authenticator;
 import java.util.Map;
 
 @Controller
@@ -100,6 +100,7 @@ public class EpController {
         user.setWalletNumber("0");
         user.setWalletId("0");
         userRepo.save(user);
+        tokenRepo.delete(token);
 
         return "redirect:/main";
     }
@@ -111,6 +112,7 @@ public class EpController {
         return "redirect:/order";
     }
     public static Token updateToken(int userId) {
+
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://api.easypay.ua/";
 
