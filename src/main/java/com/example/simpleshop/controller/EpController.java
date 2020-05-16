@@ -3,7 +3,6 @@ package com.example.simpleshop.controller;
 import com.example.simpleshop.domain.Token;
 import com.example.simpleshop.domain.User;
 import com.example.simpleshop.json.App;
-import com.example.simpleshop.json.MyAuthenticator;
 import com.example.simpleshop.json.WalletInfo;
 import com.example.simpleshop.repos.PointRepo;
 import com.example.simpleshop.repos.TokenRepo;
@@ -21,9 +20,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.Authenticator;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -42,6 +39,12 @@ public class EpController {
         Iterable<Token> token0 = tokenRepo.findAll();
         Iterator<Token> token = token0.iterator();
         Token token1 = token.next();
+
+        if(checkIfExpired(token1)) {
+            tokenRepo.deleteAll();
+            token1 = EpController.updateToken();
+            tokenRepo.save(token1);
+        }
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("name", user.getUsername());
@@ -64,7 +67,6 @@ public class EpController {
                 "  \"name\": \"string\",\n" +
                 "  \"color\": \"string\"\n" +
                 "}";
-
 
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://api.easypay.ua/";
@@ -91,17 +93,13 @@ public class EpController {
         Iterator<Token> token = token0.iterator();
         Token token1 = token.next();
 
-        String expires = token1.getExpires();
-        String formattedExpires = expires.substring(0, expires.indexOf('+'));
-        LocalDateTime localDateTime = LocalDateTime.parse(formattedExpires);
-        LocalDateTime localDateTime1 = LocalDateTime.now();
-        if(localDateTime.compareTo(localDateTime1) < 0) {
+        if(checkIfExpired(token1)) {
             tokenRepo.deleteAll();
             token1 = EpController.updateToken();
+            tokenRepo.save(token1);
         }
 
         RestTemplate restTemplate = new RestTemplate();
-
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Authorization", "bearer " + token1.getAccess_token());
         headers.add("Content-Type", "application/json");
@@ -123,11 +121,19 @@ public class EpController {
     @PostMapping("/easypay/checkBalance")
     public String checkBalance(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepo.findByUsername(userDetails.getUsername());
+        Iterable<Token> token0 = tokenRepo.findAll();
+        Iterator<Token> token = token0.iterator();
+        Token token1 = token.next();
+
+        if(checkIfExpired(token1)) {
+            tokenRepo.deleteAll();
+            token1 = EpController.updateToken();
+            tokenRepo.save(token1);
+        }
 
         return "redirect:/order";
     }
     public static Token updateToken() {
-
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://api.easypay.ua/";
 
@@ -136,7 +142,7 @@ public class EpController {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("client_id", "easypay-v2-android");
         body.add("grant_type", "password");
-        body.add("username", "380660508166");
+        body.add("username", "380916033956");
         body.add("password", "Kolya69133");
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
@@ -157,6 +163,19 @@ public class EpController {
         token.setPageId(response.getPageId());
         token.setAppId(response.getAppId());
         return token;
+    }
+    public static boolean checkIfExpired(Token token) {
+        //********************************************8
+        //*****CHEKING IF TOKEN EXPIRED**************8
+        //***********************************************
+        String expires = token.getExpires();
+        String formattedExpires = expires.substring(0, expires.indexOf('+'));
+        String formattedExpires1 = formattedExpires.substring(11,13);
+        int num = Integer.parseInt(formattedExpires1) + 3;
+        String result = formattedExpires.substring(0,11) + num + formattedExpires.substring(13);
+        LocalDateTime localDateTime = LocalDateTime.parse(result);
+        LocalDateTime localDateTime1 = LocalDateTime.now();
+        return localDateTime.compareTo(localDateTime1) < 0 ? true : false;
     }
 
 }

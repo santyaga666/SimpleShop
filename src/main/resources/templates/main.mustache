@@ -4,6 +4,9 @@
     <input type="submit" value="Sign Out"/>
 </form>
 <div>
+<strong>{{message}}</strong>
+    <strong></strong>
+<div>
     <form method="post">
         <input type="hidden" name="_csrf" value="{{_csrf.token}}">
         <input type="text" name="photo" placeholder="Введите ссылку на фото" >
@@ -38,5 +41,13 @@
         </form>
     </div>
 {{/points}}
+
+<div>
+    <form method="post" action="goToOrder">
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
+        <button type="submit">Перейти к заказу</button>
+    </form>
+</div>
+
 </body>
 </html>

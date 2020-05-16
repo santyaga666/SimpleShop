@@ -31,8 +31,9 @@ public class MainController {
         return "greeting";
     }
     @GetMapping("/main")
-    public String main(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
+    public String main(@AuthenticationPrincipal UserDetails userDetails, @RequestParam(value = "message", required = false, defaultValue = "") String message, Map<String, Object> model) {
         List<Point> points = pointRepo.findByOrdered(false);
+        model.put("message", message);
         model.put("points", points);
         model.put("filter", " ");
         return "main";
