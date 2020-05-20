@@ -199,13 +199,18 @@ public class EpController {
 
     public static boolean checkIfExpired(Token token) {
         //********************************************8
-        //*****CHEKING IF TOKEN EXPIRED**************8
+        //*****CHEKING IF TOKEN EXPIRED. !!!!!HARDCODE!!!!!**************8
         //***********************************************
         String expires = token.getExpires();
         String formattedExpires = expires.substring(0, expires.indexOf('+'));
         String formattedExpires1 = formattedExpires.substring(11, 13);
         int num = Integer.parseInt(formattedExpires1) + 3;
-        String result = formattedExpires.substring(0, 11) + num + formattedExpires.substring(13);
+        String num1 = "" + num;
+        if(num == 24) num1 = "00";
+        if(num == 25) num1 = "01";
+        if(num == 26) num1 = "02";
+        if(num == 27) num1 = "03";
+        String result = formattedExpires.substring(0, 11) + num1 + formattedExpires.substring(13);
         LocalDateTime localDateTime = LocalDateTime.parse(result);
         LocalDateTime localDateTime1 = LocalDateTime.now();
         return localDateTime.compareTo(localDateTime1) < 0 ? true : false;
