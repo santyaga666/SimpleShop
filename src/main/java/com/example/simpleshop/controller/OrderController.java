@@ -32,11 +32,12 @@ public class OrderController {
     private TokenRepo tokenRepo;
 
     @GetMapping("/order")
-    public String order(@AuthenticationPrincipal UserDetails userDetails, Map<String, Object> model) {
+    public String order(@AuthenticationPrincipal UserDetails userDetails,@RequestParam(value = "errorMessage", required = false, defaultValue = "") String errorMessage, Map<String, Object> model) {
         User user = userRepo.findByUsername(userDetails.getUsername());
         Point point = pointRepo.findByCustomer(user);
         model.put("wallet", user.getWalletNumber());
         model.put("point", point);
+        model.put("errorMessage", errorMessage);
 
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> entity = restTemplate.getForEntity("https://tnf.fastfen.club/api/Info?action=getSessionState", String.class);
@@ -60,7 +61,7 @@ public class OrderController {
     public String startOrder(@AuthenticationPrincipal UserDetails userDetails, @RequestParam Integer id) {
         User user = userRepo.findByUsername(userDetails.getUsername());
         if(pointRepo.findByCustomerId(user.getId()) != null)
-            return "redirect:/main?message=" + "Error! Please complete exist order!";
+            return "redirect:/main?errorMessage=" + "Error! Please complete exist order!";
 
         Iterable<Token> token0 = tokenRepo.findAll();
         Iterator<Token> token = token0.iterator();

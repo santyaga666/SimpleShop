@@ -1,11 +1,18 @@
 <html>
 <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
     <title>SimpleShop</title>
 </head>
 <body>
 <div>
     <div>
-        {{point.id}}
         {{point.name}}
         {{point.photo}}
         {{point.price}}
@@ -14,10 +21,19 @@
         <input type="hidden" name="_csrf" value="{{_csrf.token}}">
         <button type="submit">Отменить</button>
     </form>
+
+    <form method="post" action="checkBalance">
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
+        <button type="submit">Проверить оплату</button>
+    </form>
+
+    <strong>
+        {{errorMessage}}
+    </strong>
+
     <div>
         <strong>Номер кошелька для оплаты</strong>
         <strong>{{wallet}}</strong>
-        <strong>{{ip}}</strong>
     </div>
     <form method="post" action="check">
 
