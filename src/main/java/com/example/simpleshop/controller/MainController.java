@@ -20,6 +20,8 @@ import java.util.Map;
 public class MainController {
     @Autowired
     private PointRepo pointRepo;
+    @Autowired
+    private  TokenRepo tokenRepo;
 
     @GetMapping("/main")
     public String main(@RequestParam(value = "errorMessage", required = false, defaultValue = "") String errorMessage,
@@ -48,6 +50,7 @@ public class MainController {
     @PostMapping("clear")
     public String clear(){
         pointRepo.deleteAll();
+        tokenRepo.deleteAll();
 
         return "redirect:/main";
     }

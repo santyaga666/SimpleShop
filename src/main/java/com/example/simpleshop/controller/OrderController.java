@@ -80,8 +80,4 @@ public class OrderController {
 
         return "forward:/easypay/addWallet";
     }
-    @PostMapping("goToOrder")
-    public String goToOrder() {
-        return "redirect:/order";
-    }
 }

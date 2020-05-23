@@ -7,13 +7,16 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="/">Home </a>
+                <a class="nav-link" href="/">Home</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/main">Showcase </a>
+                <a class="nav-link" href="/main">Showcase</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/order">Order </a>
+                <a class="nav-link" href="/order">Order</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/user">UserList</a>
             </li>
         </ul>
     </div>
