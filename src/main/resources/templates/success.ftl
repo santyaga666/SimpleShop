@@ -2,8 +2,10 @@
 
 <@c.page>
 
-${point.name}
-${point.photo}
-${point.price}
-
+    <div class="card-columns">
+        ${point.name}
+        ${point.photo}
+        ${point.price}
+    </div>
+    
 </@c.page>

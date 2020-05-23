@@ -2,9 +2,6 @@
 
 <@c.page>
 
-    <form action="/logout" method="post">
-        <input type="submit" value="Sign Out"/>
-    </form>
     <div>
     <strong>${errorMessage}</strong>
     <strong></strong>
@@ -26,12 +23,13 @@
         <input type="hidden" name="_csrf" value="${_csrf.token}">
         <button type="submit">Очистить</button>
     </form>
-    <div>Список лотов</div>
+    <div>
+        Список лотов
+    </div>
 
+    <div class="card-columns">
     <#list points as point>
-        <div>
-            <strong>${point.photo}</strong>
-            <strong>${point.price}</strong>
+        <div class="card" style="width: 18rem;">
             <strong>${point.name}</strong>
 
             <form method="post" action="order">
@@ -43,6 +41,6 @@
     <#else>
         No Points
     </#list>
-
+    </div>
 
 </@c.page>

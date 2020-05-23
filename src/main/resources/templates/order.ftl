@@ -3,10 +3,8 @@
 <@c.page>
 
 <div>
-    <div>
+    <div class="card-columns">
         ${point.name}
-        ${point.photo}
-        ${point.price}
     </div>
     <form method="post" action="cancel">
         <input type="hidden" name="_csrf" value="${_csrf.token}">
