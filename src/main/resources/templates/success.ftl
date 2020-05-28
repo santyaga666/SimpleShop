@@ -7,5 +7,5 @@
         ${point.photo}
         ${point.price}
     </div>
-    
+
 </@c.page>

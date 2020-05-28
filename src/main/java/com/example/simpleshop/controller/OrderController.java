@@ -39,13 +39,6 @@ public class OrderController {
         model.put("point", point);
         model.put("errorMessage", errorMessage);
 
-        RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<String> entity = restTemplate.getForEntity("https://tnf.fastfen.club/api/Info?action=getSessionState", String.class);
-        String s0 = entity.getBody();
-        int a = s0.indexOf("Ip");
-        String s = s0.substring(a+6, a+19);
-        model.put("ip", s);
-
         return "order";
     }
     @PostMapping("cancel")

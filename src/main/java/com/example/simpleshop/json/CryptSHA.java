@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 
-public class Crypt {
+public class CryptSHA {
 
     public static String generate(String str, byte[] key) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-384");
