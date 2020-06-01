@@ -40,11 +40,4 @@ public class MainController {
         return "redirect:/main?filter=" + filter;
     }
 
-    @PostMapping("clear")
-    public String clear(){
-        pointRepo.deleteAll();
-        tokenRepo.deleteAll();
-
-        return "redirect:/main";
-    }
 }
