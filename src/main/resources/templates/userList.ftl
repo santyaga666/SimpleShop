@@ -1,9 +1,8 @@
 <#import "parts/common.ftl" as c>
 
 <@c.page>
-
     <div>
-    Список пользователей
+    List of users
     <table>
         <thead>
         <tr>
@@ -40,6 +39,4 @@
             <button type="submit">Очистить</button>
         </form>
     </div>
-
-
 </@c.page>

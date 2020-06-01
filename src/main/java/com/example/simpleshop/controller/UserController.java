@@ -17,48 +17,35 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
 @Controller
 @RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserRepo userRepo;
     @Autowired
-    TokenRepo tokenRepo;
-
-    @Autowired
     private PointRepo pointRepo;
+    @Autowired
+    private TokenRepo tokenRepo;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public String userList(Model model) {
         model.addAttribute("users", userRepo.findAll());
 
-        return "adminPanel";
+        return "userList";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("{user}")
     public String userEditForm(@PathVariable User user, Model model) {
         model.addAttribute("user", user);
+        model.addAttribute("roles", Role.values());
 
         return "userEdit";
     }
 
-    @PostMapping
-    public String add(@RequestParam String photo, @RequestParam String price, @RequestParam String name, Map<String, Object> model) {
-
-        Point point = new Point(photo, price, name);
-        pointRepo.save(point);
-
-        return "redirect:/user";
-    }
-
-    @PostMapping("clear")
-    public String crearRepo() {
-        pointRepo.deleteAll();
-        tokenRepo.deleteAll();
-
-        return "redirect:/user";
-    }
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public String userSave(
             @RequestParam String username,
@@ -80,6 +67,25 @@ public class UserController {
         }
 
         userRepo.save(user);
+
+        return "redirect:/user";
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("add")
+    public String add(@RequestParam String photo, @RequestParam String price, @RequestParam String name, Map<String, Object> model) {
+
+        Point point = new Point(photo, price, name);
+        pointRepo.save(point);
+
+        return "redirect:/user";
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("clear")
+    public String crearRepo() {
+        pointRepo.deleteAll();
+        tokenRepo.deleteAll();
 
         return "redirect:/user";
     }
