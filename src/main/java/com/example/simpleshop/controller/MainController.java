@@ -34,14 +34,7 @@ public class MainController {
 
         return "main";
     }
-    @PostMapping("/main")
-    public String add(@RequestParam String photo, @RequestParam String price, @RequestParam String name, Map<String, Object> model) {
 
-        Point point = new Point(photo, price, name);
-        pointRepo.save(point);
-
-        return "redirect:/main";
-    }
     @PostMapping("filter")
     public String filter(@RequestParam String filter) {
         return "redirect:/main?filter=" + filter;

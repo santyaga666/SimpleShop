@@ -16,7 +16,7 @@
                 <a class="nav-link" href="/order">Order</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/user">UserList</a>
+                <a class="nav-link" href="/user">AdminPanel</a>
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="/logout">LogOut</a>

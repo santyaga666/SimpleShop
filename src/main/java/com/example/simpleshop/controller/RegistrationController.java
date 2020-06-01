@@ -4,6 +4,7 @@ import com.example.simpleshop.domain.Role;
 import com.example.simpleshop.domain.User;
 import com.example.simpleshop.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,11 @@ public class RegistrationController {
             model.put("message", "User exists!");
             return "registration";
         }
+
+        //For encrypt
+        String encodedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        //
 
         user.setActive(true);
         user.setRoles(Collections.singleton(Role.USER));
